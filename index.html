@@ -336,6 +336,28 @@ h1 .glitch::after{color:var(--danger); animation:glitch-b 6.2s infinite linear; 
 .warnbox li{margin-bottom:6px;}
 
 /* ───────── stack badges ───────── */
+/* ───────── scale comparison (v1 → v2) ───────── */
+.scale-grid{
+  display:grid; grid-template-columns:1fr auto 1fr; gap:22px; align-items:center;
+  margin-top:36px;
+}
+@media (max-width:760px){
+  .scale-grid{grid-template-columns:1fr;}
+  .scale-arrow{transform:rotate(90deg); margin:4px auto;}
+}
+.scale-card{border:1px solid var(--line); background:var(--panel); padding:24px 22px;}
+.scale-card.cyan{border-color:rgba(58,215,255,0.3);}
+.scale-tag{font-size:12px; color:var(--muted); margin-bottom:16px;}
+.scale-card.cyan .scale-tag{color:var(--cyan);}
+.scale-row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+  padding:10px 0; border-bottom:1px solid var(--line); font-size:13px; color:#aecbbb;
+}
+.scale-row:last-child{border-bottom:none;}
+.scale-row b{color:var(--accent); font-size:13.5px; text-align:right;}
+.scale-card.cyan .scale-row b{color:var(--cyan);}
+.scale-arrow{font-size:22px; color:var(--muted);}
+
 .stack{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px;}
 .badge{
   border:1px solid var(--line);
@@ -376,6 +398,7 @@ footer .fcol a:hover{color:var(--accent);}
     <div class="navlinks">
       <a href="#projet">projet</a>
       <a href="#piliers">piliers</a>
+      <a href="#optimisation">optimisation</a>
       <a href="#templates">plateformes</a>
       <a href="#garde">sensibilisation</a>
       <a href="#stack">stack</a>
@@ -511,6 +534,67 @@ footer .fcol a:hover{color:var(--accent);}
       <div class="stat-box"><div class="num" data-count="5">0</div><div class="label">plateformes simulées</div></div>
       <div class="stat-box"><div class="num" data-count="2">0</div><div class="label">postes nécessaires (client / attaquant)</div></div>
       <div class="stat-box"><div class="num" data-count="0">0</div><div class="label">connexion cloud requise pour l'IA</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ OPTIMISATION ═══════════════════════ -->
+<section id="optimisation">
+  <div class="container">
+    <div class="eyebrow"><span class="prompt">$</span> python3 osint_wordlist.py --explain</div>
+    <h2>Ce que l'IA fait grossir, <span class="dim">et ce qu'elle ne fait pas</span></h2>
+    <p class="lead">
+      L'IA ne construit jamais le dictionnaire final elle-même — elle choisit les bons
+      mots-clés de départ. C'est le code de combinatoire qui les décline ensuite en
+      dizaines de variantes chacun. Comprendre cette séparation, c'est comprendre
+      pourquoi le système est facile à faire grossir sans jamais ralentir le cassage.
+    </p>
+
+    <div class="arch reveal" style="margin-top:32px;">
+<b>1 mot-clé IA</b>  (ex: "Ewen")
+   │
+   ├─ 3 casses              ewen · Ewen · EWEN
+   ├─ × 10 nombres          Ewen2008 · Ewen35160 · ...
+   ├─ × 8 séparateurs × 6   Ewen@2008 · Ewen#35160 · ...
+   ├─ + 10 suffixes         Ewen123 · Ewen! · Ewen123! · ...
+   └─ + variantes leet      3wen · Ew3n2008 · ...
+   <span class="flow">▼</span>
+<b>≈ 60 à 80 variantes</b> pour ce seul mot-clé — avant même les mots composés
+    </div>
+
+    <div class="scale-grid reveal">
+      <div class="scale-card">
+        <div class="scale-tag">v1 — état actuel de la démo</div>
+        <div class="scale-row"><span>mots-clés fournis par l'IA</span><b>60</b></div>
+        <div class="scale-row"><span>dictionnaire final généré</span><b>≈ 3 800 lignes</b></div>
+        <div class="scale-row"><span>exemple réel</span><b>dico_osint_cible.txt</b></div>
+      </div>
+      <div class="scale-arrow">→</div>
+      <div class="scale-card cyan">
+        <div class="scale-tag">v2 — en changeant un seul paramètre</div>
+        <div class="scale-row"><span>mots-clés fournis par l'IA</span><b>120</b></div>
+        <div class="scale-row"><span>dictionnaire final généré</span><b>quasi x2</b></div>
+        <div class="scale-row"><span>coût du changement</span><b>une ligne de prompt</b></div>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:28px;">
+      Doubler le nombre de mots-clés double quasiment la combinatoire par mot — mais
+      les <em>mots composés</em> (prénom + nom, nom + animal...) sont volontairement
+      plafonnés à 200 paires dans le code : passé ce seuil, ajouter des mots-clés
+      n'explose plus le dictionnaire, ça affine surtout sa pertinence.
+    </p>
+
+    <div class="warnbox reveal" style="margin-top:26px; border-color:rgba(58,215,255,0.35); background:rgba(58,215,255,0.05);">
+      <div class="head" style="color:var(--cyan);">◉ et John the Ripper, dans tout ça ?</div>
+      <p style="color:#a9d7e6;">
+        Quelle que soit la taille du dictionnaire — 60 mots ou 60 000 — John the Ripper
+        garde le même débit sur du MD5 non salé (plus de 100 000 mots/seconde sur un CPU
+        multi-cœurs). La limite n'a jamais été la vitesse de cassage : elle est dans la
+        <b style="color:var(--cyan);">qualité du dictionnaire</b>. C'est exactement le
+        message de la démo — l'IA ne rend pas l'attaque plus rapide, elle la rend plus
+        pertinente.
+      </p>
     </div>
   </div>
 </section>
