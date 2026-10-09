@@ -1,0 +1,8 @@
+=== RAPPORT DE DEMONSTRATION - BRUTEFORCE DICTIONNAIRE ===
+Login ciblé       : admin
+Mot de passe trouvé : Albin35
+Durée du cassage  : 0.3755 secondes
+Dictionnaire victorieux : dico_osint_cible.txt
+Nombre de tentatives (rang dans le dico) : 2
+Débit estimé : 5 mots/seconde
+Accès compte confirmé : OUI
